@@ -14,7 +14,7 @@ $config = [
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'TeFW77e4-J7bvKugiUcL2T1cQzcjqkM-',
+            'cookieValidationKey' => 'FM29SqcsVYt69KHKNMCa7MskYM-KpHIi',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -42,14 +42,20 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
         'urlManager' => [
-            'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'rules' => [
-            ],
+            'enableStrictParsing' => true,
+            'enablePrettyUrl' => true, 
+            'rules' => array(
+  
+                    '/' => 'site/index', 
+                    '/test' => 'site/transfer', 
+                    '/balance' => 'user/balance', 
+                    '/transfer' => 'user/transfer',
+                    '<action:\w+>' => 'site/<action>',
+
+            ),
         ],
-        */
     ],
     'params' => $params,
 ];

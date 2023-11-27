@@ -2,13 +2,18 @@
 
 namespace app\controllers;
 
+use app\models\Transfer;
 use Yii;
-use yii\filters\AccessControl;
-use yii\web\Controller;
+use app\models\User;
 use yii\web\Response;
-use yii\filters\VerbFilter;
+use yii\web\Controller;
 use app\models\LoginForm;
+use app\models\SignupForm;
 use app\models\ContactForm;
+use app\models\Currency;
+use app\models\Wallet;
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 class SiteController extends Controller
 {
@@ -53,7 +58,8 @@ class SiteController extends Controller
             ],
         ];
     }
-
+    
+  
     /**
      * Displays homepage.
      *
@@ -61,6 +67,10 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+     //  $user = User::find()->where(["id"=> Yii::$app->user->id])->one();
+     //  dd($user->wallets[0]);
+     //  $model = Wallet::find()->one();
+     //   dd($model->user);
         return $this->render('index');
     }
 
@@ -115,6 +125,46 @@ class SiteController extends Controller
             'model' => $model,
         ]);
     }
+    /**
+     * Create Default Wallets
+     *
+     * @param [type] $userId
+     * @return void
+     */
+    public function createWallets($userId){
+        $curency = ["EUR","USD"];
+
+        foreach($curency as $code ){
+            $wallet = new Wallet();
+            $wallet->user_id = $userId;
+            $wallet->currency = $code;
+            $wallet->balance = "300";
+            $wallet->save();
+        }
+    }
+    /**
+     * Register new user
+     *
+     * @return void
+     */
+    public function actionSignup()
+    {
+     
+        $model = new SignupForm();
+
+        if ($model->load(Yii::$app->request->post())) {
+            if ($user = $model->signup()) {
+                $this->createWallets($user->id);
+                if (Yii::$app->getUser()->login($user)) {
+                    return $this->goHome();
+                }
+            }
+        }
+ 
+        return $this->render('signup', [
+            'model' => $model,
+        ]);
+    }
 
     /**
      * Displays about page.
@@ -125,4 +175,6 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+
+
 }
